@@ -1,23 +1,30 @@
 "use client";
 
 import Image from "next/image";
-import { Check } from "lucide-react";
+import { Check, Eye } from "lucide-react";
 import { TEMPLATES } from "@/lib/constants";
 
 interface TemplatePreviewProps {
   templateId: string;
   selected?: boolean;
   onSelect?: (templateId: string) => void;
+  onPreview?: (templateId: string) => void;
 }
 
 export default function TemplatePreview({
   templateId,
   selected = false,
   onSelect,
+  onPreview,
 }: TemplatePreviewProps) {
   const template = TEMPLATES.find((t) => t.id === templateId);
 
   if (!template) return null;
+
+  const handlePreviewClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onPreview?.(templateId);
+  };
 
   return (
     <div
@@ -33,6 +40,17 @@ export default function TemplatePreview({
         <div className="absolute top-2 right-2 z-10 bg-primary-600 text-white rounded-full p-1">
           <Check className="w-4 h-4" />
         </div>
+      )}
+
+      {/* Preview Button */}
+      {onPreview && (
+        <button
+          onClick={handlePreviewClick}
+          className="absolute top-2 left-2 z-10 bg-white/90 hover:bg-white text-gray-700 rounded-lg px-3 py-2 text-sm font-medium flex items-center gap-1 shadow-md hover:shadow-lg transition-all"
+        >
+          <Eye className="w-4 h-4" />
+          Preview
+        </button>
       )}
 
       {/* Template Preview */}

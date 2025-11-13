@@ -7,7 +7,8 @@ import { Heart } from "lucide-react";
 // Mock function - replace with actual API call
 async function getWeddingBySubdomain(subdomain: string) {
   // Simulate API call
-  // In production, fetch from your backend
+  // In production, fetch from your backend: GET /api/wedding/:subdomain
+  // Should return wedding with customColors if set
   return {
     id: "wedding-123",
     subdomain,
@@ -20,6 +21,9 @@ async function getWeddingBySubdomain(subdomain: string) {
     imageUrl: undefined,
     message: "We joyfully request the pleasure of your company at our wedding celebration",
     template: "elegant-rose",
+    customColors: undefined, // Will be set if user customized colors
+    // Example with custom colors:
+    // customColors: { primary: "#ff6b9d", secondary: "#00b8d4", accent: "#fff59d" }
   };
 }
 
@@ -74,7 +78,11 @@ export default async function InvitationPage({
       <main className="py-12 px-4">
         <div className="max-w-4xl mx-auto space-y-12">
           {/* Invitation Card */}
-          <InviteCard wedding={wedding} template={wedding.template} />
+          <InviteCard 
+            wedding={wedding} 
+            template={wedding.template}
+            customColors={wedding.customColors}
+          />
 
           {/* RSVP Section */}
           <div className="flex justify-center">

@@ -1,8 +1,12 @@
 "use client";
 
-import Image from "next/image";
-import { Calendar, MapPin, Clock } from "lucide-react";
-import { formatDate } from "@/lib/utils";
+import { TEMPLATES, MOCK_GALLERY_IMAGES } from "@/lib/constants";
+import BasicLayout from "@/components/templates/BasicLayout";
+import ElegantLayout from "@/components/templates/ElegantLayout";
+import ModernLayout from "@/components/templates/ModernLayout";
+import RusticLayout from "@/components/templates/RusticLayout";
+import TropicalLayout from "@/components/templates/TropicalLayout";
+import VintageLayout from "@/components/templates/VintageLayout";
 
 interface InviteCardProps {
   wedding: {
@@ -14,89 +18,58 @@ interface InviteCardProps {
     venueAddress?: string;
     imageUrl?: string;
     message?: string;
+    galleryImages?: string[];
   };
   template?: string;
+  customColors?: {
+    primary: string;
+    secondary: string;
+    accent: string;
+  };
 }
 
-export default function InviteCard({ wedding, template = "elegant-rose" }: InviteCardProps) {
-  return (
-    <div className="max-w-2xl mx-auto">
-      <div className="card overflow-hidden">
-        {/* Header Image */}
-        {wedding.imageUrl && (
-          <div className="relative w-full h-64 -mx-6 -mt-6 mb-6">
-            <Image
-              src={wedding.imageUrl}
-              alt={`${wedding.brideName} & ${wedding.groomName}`}
-              fill
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white" />
-          </div>
-        )}
+export default function InviteCard({ 
+  wedding, 
+  template = "elegant-rose",
+  customColors 
+}: InviteCardProps) {
+  // Get base template
+  const baseTemplate = TEMPLATES.find((t) => t.id === template);
+  
+  // Use custom colors if provided, otherwise use template defaults
+  const colors = customColors || baseTemplate?.colors || {
+    primary: "#d04061",
+    secondary: "#446382",
+    accent: "#f5f5f5",
+  };
 
-        {/* Couple Names */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-serif text-gray-900 mb-2">
-            {wedding.brideName}
-          </h1>
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <div className="w-12 h-px bg-primary-400" />
-            <span className="text-2xl text-primary-600">&</span>
-            <div className="w-12 h-px bg-primary-400" />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-serif text-gray-900">
-            {wedding.groomName}
-          </h1>
-        </div>
+  // Get gallery images (use provided or mock images)
+  const galleryImages = wedding.galleryImages || [...MOCK_GALLERY_IMAGES];
 
-        {/* Invitation Message */}
-        {wedding.message && (
-          <div className="text-center mb-8">
-            <p className="text-gray-600 italic">{wedding.message}</p>
-          </div>
-        )}
+  // Determine which layout to use
+  const layout = baseTemplate?.layout || "elegant";
 
-        {/* Wedding Details */}
-        <div className="space-y-4 mb-8">
-          {/* Date */}
-          <div className="flex items-start gap-3">
-            <Calendar className="w-5 h-5 text-primary-600 mt-0.5" />
-            <div>
-              <p className="font-medium text-gray-900">Date</p>
-              <p className="text-gray-600">{formatDate(new Date(wedding.date), "full")}</p>
-            </div>
-          </div>
+  // Render the appropriate layout component
+  const layoutProps = {
+    wedding,
+    colors,
+    galleryImages,
+  };
 
-          {/* Time */}
-          <div className="flex items-start gap-3">
-            <Clock className="w-5 h-5 text-primary-600 mt-0.5" />
-            <div>
-              <p className="font-medium text-gray-900">Time</p>
-              <p className="text-gray-600">{wedding.time}</p>
-            </div>
-          </div>
-
-          {/* Venue */}
-          <div className="flex items-start gap-3">
-            <MapPin className="w-5 h-5 text-primary-600 mt-0.5" />
-            <div>
-              <p className="font-medium text-gray-900">Venue</p>
-              <p className="text-gray-600">{wedding.venue}</p>
-              {wedding.venueAddress && (
-                <p className="text-sm text-gray-500">{wedding.venueAddress}</p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Decorative Element */}
-        <div className="text-center py-6 border-t border-gray-200">
-          <p className="text-sm text-gray-500">
-            We joyfully request the pleasure of your company
-          </p>
-        </div>
-      </div>
-    </div>
-  );
+  switch (layout) {
+    case "basic":
+      return <BasicLayout {...layoutProps} />;
+    case "elegant":
+      return <ElegantLayout {...layoutProps} />;
+    case "modern":
+      return <ModernLayout {...layoutProps} />;
+    case "rustic":
+      return <RusticLayout {...layoutProps} />;
+    case "tropical":
+      return <TropicalLayout {...layoutProps} />;
+    case "vintage":
+      return <VintageLayout {...layoutProps} />;
+    default:
+      return <ElegantLayout {...layoutProps} />;
+  }
 }

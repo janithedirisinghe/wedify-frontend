@@ -26,6 +26,18 @@ export const ROUTES = {
 // Wedding Templates
 export const TEMPLATES = [
   {
+    id: "basic",
+    name: "Basic Simple",
+    description: "Clean and minimal design - perfect starting point",
+    thumbnail: "/templates/basic.jpg",
+    colors: {
+      primary: "#374151",
+      secondary: "#1f2937",
+      accent: "#f9fafb",
+    },
+    layout: "basic" as const,
+  },
+  {
     id: "elegant-rose",
     name: "Elegant Rose",
     description: "Classic and romantic design with rose accents",
@@ -35,6 +47,7 @@ export const TEMPLATES = [
       secondary: "#2d3b4c",
       accent: "#f9d5da",
     },
+    layout: "elegant" as const,
   },
   {
     id: "modern-minimal",
@@ -46,6 +59,7 @@ export const TEMPLATES = [
       secondary: "#587d9c",
       accent: "#eaeef4",
     },
+    layout: "modern" as const,
   },
   {
     id: "rustic-charm",
@@ -57,6 +71,7 @@ export const TEMPLATES = [
       secondary: "#4a5d3f",
       accent: "#f5e6d3",
     },
+    layout: "rustic" as const,
   },
   {
     id: "tropical-paradise",
@@ -68,6 +83,7 @@ export const TEMPLATES = [
       secondary: "#00b8d4",
       accent: "#fff59d",
     },
+    layout: "tropical" as const,
   },
   {
     id: "vintage-classic",
@@ -79,6 +95,7 @@ export const TEMPLATES = [
       secondary: "#5d4037",
       accent: "#f5f5dc",
     },
+    layout: "vintage" as const,
   },
 ] as const;
 
@@ -175,3 +192,13 @@ export const SOCIAL_LINKS = {
   TWITTER: "https://twitter.com/wedify",
   LINKEDIN: "https://linkedin.com/company/wedify",
 } as const;
+
+// Mock Gallery Images (for template previews)
+export const MOCK_GALLERY_IMAGES = [
+  "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1470229538611-16ba8c7ffbd7?w=800&h=600&fit=crop",
+  "https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=800&h=600&fit=crop",
+] as const;

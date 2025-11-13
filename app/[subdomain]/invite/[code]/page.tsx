@@ -7,6 +7,7 @@ import { Heart, Gift } from "lucide-react";
 // Mock function - replace with actual API call
 async function getGuestInvitation(subdomain: string, code: string) {
   // Simulate API call
+  // In production: GET /api/wedding/:subdomain/guest/:code
   return {
     guest: {
       id: code,
@@ -25,6 +26,7 @@ async function getGuestInvitation(subdomain: string, code: string) {
       imageUrl: undefined,
       message: "We joyfully request the pleasure of your company at our wedding celebration",
       template: "elegant-rose",
+      customColors: undefined, // Will be set if user customized colors
     },
   };
 }
@@ -100,7 +102,11 @@ export default async function PersonalInvitePage({
           </div>
 
           {/* Invitation Card */}
-          <InviteCard wedding={wedding} template={wedding.template} />
+          <InviteCard 
+            wedding={wedding} 
+            template={wedding.template}
+            customColors={wedding.customColors}
+          />
 
           {/* Guest Details */}
           {guest.guestCount > 1 && (

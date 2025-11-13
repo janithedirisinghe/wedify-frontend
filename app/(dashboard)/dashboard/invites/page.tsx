@@ -1,252 +1,198 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, MessageSquare, Copy, QrCode, Send, CheckCircle } from "lucide-react";
-import Modal from "@/components/ui/Modal";
-import { copyToClipboard, generateWhatsAppLink } from "@/lib/utils";
+import { Plus, Users, Palette, Send, Edit, Trash2, Eye } from "lucide-react";
+import Link from "next/link";
+import { TEMPLATES } from "@/lib/constants";
+
+interface InvitationGroup {
+  id: string;
+  name: string;
+  templateId: string;
+  customColors?: {
+    primary: string;
+    secondary: string;
+    accent: string;
+  };
+  guestIds: string[];
+  createdAt: string;
+  sentCount: number;
+}
 
 export default function InvitesPage() {
-  const [isQRModalOpen, setIsQRModalOpen] = useState(false);
-  const [selectedGuest, setSelectedGuest] = useState<any>(null);
-
-  const inviteUrl = "https://john-and-jane.wedify.lk";
-
-  const guests = [
+  const [groups, setGroups] = useState<InvitationGroup[]>([
     {
       id: "1",
-      name: "Sarah Johnson",
-      email: "sarah@example.com",
-      phone: "+94712345678",
-      inviteSent: true,
-      inviteMethod: "email",
-      sentDate: "2024-11-10",
+      name: "Family & Close Friends",
+      templateId: "elegant-rose",
+      customColors: {
+        primary: "#e35d72",
+        secondary: "#2d3b4c",
+        accent: "#f9d5da",
+      },
+      guestIds: ["1", "2", "3"],
+      createdAt: "2025-11-01",
+      sentCount: 2,
     },
     {
       id: "2",
-      name: "Michael Brown",
-      email: "michael@example.com",
-      phone: "+94773456789",
-      inviteSent: false,
-      inviteMethod: null,
-      sentDate: null,
+      name: "Work Colleagues",
+      templateId: "modern-minimal",
+      guestIds: ["4", "5"],
+      createdAt: "2025-11-05",
+      sentCount: 0,
     },
-    {
-      id: "3",
-      name: "Emily Davis",
-      email: "emily@example.com",
-      phone: "+94764567890",
-      inviteSent: true,
-      inviteMethod: "whatsapp",
-      sentDate: "2024-11-09",
-    },
-  ];
+  ]);
 
-  const handleCopyLink = async () => {
-    const success = await copyToClipboard(inviteUrl);
-    if (success) {
-      alert("Link copied to clipboard!");
+  const handleDeleteGroup = (id: string) => {
+    if (confirm("Are you sure you want to delete this invitation group?")) {
+      setGroups(groups.filter((group) => group.id !== id));
     }
   };
 
-  const handleSendEmail = (guest: any) => {
-    console.log("Sending email to:", guest);
-    // Implement email sending logic
-  };
-
-  const handleSendWhatsApp = (guest: any) => {
-    const message = `You're invited to our wedding! View your invitation here: ${inviteUrl}/invite/${guest.id}`;
-    const whatsappUrl = generateWhatsAppLink(guest.phone, message);
-    window.open(whatsappUrl, "_blank");
-  };
-
-  const handleBulkSend = (method: "email" | "whatsapp") => {
-    console.log(`Sending bulk invitations via ${method}`);
-    // Implement bulk send logic
+  const getTemplate = (templateId: string) => {
+    return TEMPLATES.find((t) => t.id === templateId);
   };
 
   return (
-    <div className="space-y-6">
+    <div>
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Send Invitations</h1>
-        <p className="text-gray-600 mt-1">
-          Share your wedding invitation with guests
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">Invitation Groups</h1>
+        <p className="text-gray-600">
+          Manage invitation groups with different templates and guest lists
         </p>
-      </div>
-
-      {/* Invitation Link Card */}
-      <div className="card bg-gradient-to-br from-primary-50 to-white border-2 border-primary-100">
-        <div className="flex items-start justify-between mb-4">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-1">
-              Your Invitation Link
-            </h3>
-            <p className="text-sm text-gray-600">
-              Share this link with your guests
-            </p>
-          </div>
-          <button
-            onClick={() => setIsQRModalOpen(true)}
-            className="btn-outline text-sm flex items-center gap-2"
-          >
-            <QrCode className="w-4 h-4" />
-            QR Code
-          </button>
-        </div>
-
-        <div className="flex items-center gap-2 p-4 bg-white rounded-lg border border-gray-200">
-          <input
-            type="text"
-            value={inviteUrl}
-            readOnly
-            className="flex-1 bg-transparent outline-none text-sm text-gray-700"
-          />
-          <button
-            onClick={handleCopyLink}
-            className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm font-medium"
-          >
-            <Copy className="w-4 h-4" />
-            Copy
-          </button>
-        </div>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <div className="card">
-          <p className="text-sm text-gray-600">Total Guests</p>
-          <p className="text-2xl font-bold text-gray-900">{guests.length}</p>
+          <p className="text-sm text-gray-600 mb-1">Total Groups</p>
+          <p className="text-3xl font-bold text-gray-900">{groups.length}</p>
         </div>
         <div className="card">
-          <p className="text-sm text-gray-600">Invitations Sent</p>
-          <p className="text-2xl font-bold text-green-600">
-            {guests.filter((g) => g.inviteSent).length}
+          <p className="text-sm text-gray-600 mb-1">Total Invitations</p>
+          <p className="text-3xl font-bold text-blue-600">
+            {groups.reduce((sum, g) => sum + g.guestIds.length, 0)}
           </p>
         </div>
         <div className="card">
-          <p className="text-sm text-gray-600">Pending</p>
-          <p className="text-2xl font-bold text-yellow-600">
-            {guests.filter((g) => !g.inviteSent).length}
+          <p className="text-sm text-gray-600 mb-1">Sent</p>
+          <p className="text-3xl font-bold text-green-600">
+            {groups.reduce((sum, g) => sum + g.sentCount, 0)}
           </p>
         </div>
       </div>
 
-      {/* Bulk Actions */}
-      <div className="card">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          Send to All Guests
-        </h3>
-        <div className="flex flex-col sm:flex-row gap-4">
-          <button
-            onClick={() => handleBulkSend("email")}
-            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
-          >
-            <Mail className="w-5 h-5" />
-            Send All via Email
-          </button>
-          <button
-            onClick={() => handleBulkSend("whatsapp")}
-            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
-          >
-            <MessageSquare className="w-5 h-5" />
-            Send All via WhatsApp
-          </button>
-        </div>
-        <p className="text-sm text-gray-500 mt-3">
-          This will send invitations to all guests who haven't received one yet
-        </p>
-      </div>
-
-      {/* Guest List */}
-      <div className="card">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          Individual Invitations
-        </h3>
-        <div className="space-y-3">
-          {guests.map((guest) => (
-            <div
-              key={guest.id}
-              className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <p className="font-medium text-gray-900">{guest.name}</p>
-                  {guest.inviteSent && (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-800 text-xs font-medium rounded-full">
-                      <CheckCircle className="w-3 h-3" />
-                      Sent
-                    </span>
-                  )}
-                </div>
-                <div className="flex items-center gap-4 mt-1">
-                  <p className="text-sm text-gray-600">{guest.email}</p>
-                  <p className="text-sm text-gray-600">{guest.phone}</p>
-                </div>
-                {guest.inviteSent && (
-                  <p className="text-xs text-gray-500 mt-1">
-                    Sent via {guest.inviteMethod} on {guest.sentDate}
-                  </p>
-                )}
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => handleSendEmail(guest)}
-                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                  title="Send via Email"
-                >
-                  <Mail className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => handleSendWhatsApp(guest)}
-                  className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
-                  title="Send via WhatsApp"
-                >
-                  <MessageSquare className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => {
-                    setSelectedGuest(guest);
-                    setIsQRModalOpen(true);
-                  }}
-                  className="p-2 text-gray-600 hover:bg-gray-200 rounded-lg transition-colors"
-                  title="Generate QR Code"
-                >
-                  <QrCode className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* QR Code Modal */}
-      <Modal
-        isOpen={isQRModalOpen}
-        onClose={() => {
-          setIsQRModalOpen(false);
-          setSelectedGuest(null);
-        }}
-        title="QR Code"
-      >
-        <div className="text-center space-y-4">
-          <div className="bg-gray-100 p-8 rounded-lg inline-block">
-            {/* Placeholder for QR code - use a QR code library in production */}
-            <div className="w-64 h-64 bg-white flex items-center justify-center border-4 border-gray-300">
-              <QrCode className="w-32 h-32 text-gray-400" />
-            </div>
+      {/* Create New Group Button */}
+      <div className="card mb-6 bg-gradient-to-r from-primary-50 to-secondary-50 border-2 border-dashed border-primary-300">
+        <div className="text-center py-8">
+          <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Plus className="w-8 h-8 text-primary-600" />
           </div>
-          <p className="text-sm text-gray-600">
-            {selectedGuest
-              ? `QR code for ${selectedGuest.name}`
-              : "Scan this code to view the invitation"}
+          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            Create New Invitation Group
+          </h3>
+          <p className="text-gray-600 mb-4">
+            Select a template, customize colors, and choose guests to create an invitation group
           </p>
-          <div className="flex gap-3">
-            <button className="flex-1 btn-outline">Download</button>
-            <button className="flex-1 btn-primary">Share</button>
-          </div>
+          <Link href="/dashboard/invites/create" className="btn-primary inline-flex items-center gap-2">
+            <Plus className="w-5 h-5" />
+            Create Group
+          </Link>
         </div>
-      </Modal>
+      </div>
+
+      {/* Groups List */}
+      {groups.length === 0 ? (
+        <div className="card text-center py-12">
+          <p className="text-gray-500">No invitation groups yet. Create your first group!</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {groups.map((group) => {
+            const template = getTemplate(group.templateId);
+            const colors = group.customColors || template?.colors;
+
+            return (
+              <div key={group.id} className="card">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-1">
+                      {group.name}
+                    </h3>
+                    <p className="text-sm text-gray-500">
+                      Created {new Date(group.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <Link
+                      href={`/dashboard/invites/${group.id}/edit`}
+                      className="p-2 text-gray-600 hover:text-primary-600 hover:bg-gray-100 rounded-lg transition-colors"
+                      title="Edit"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </Link>
+                    <button
+                      onClick={() => handleDeleteGroup(group.id)}
+                      className="p-2 text-gray-600 hover:text-red-600 hover:bg-gray-100 rounded-lg transition-colors"
+                      title="Delete"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="mb-4">
+                  <div
+                    className="h-32 rounded-lg flex items-center justify-center relative overflow-hidden"
+                    style={{
+                      background: colors
+                        ? `linear-gradient(135deg, ${colors.primary}, ${colors.secondary})`
+                        : "#e5e7eb",
+                    }}
+                  >
+                    <div className="text-center text-white z-10">
+                      <Palette className="w-8 h-8 mx-auto mb-2" />
+                      <p className="font-medium">{template?.name || "Unknown Template"}</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 mb-4 p-3 bg-gray-50 rounded-lg">
+                  <div className="text-center">
+                    <Users className="w-5 h-5 mx-auto mb-1 text-gray-600" />
+                    <p className="text-sm text-gray-600">Guests</p>
+                    <p className="text-lg font-bold text-gray-900">{group.guestIds.length}</p>
+                  </div>
+                  <div className="text-center">
+                    <Send className="w-5 h-5 mx-auto mb-1 text-gray-600" />
+                    <p className="text-sm text-gray-600">Sent</p>
+                    <p className="text-lg font-bold text-green-600">{group.sentCount}</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  <Link
+                    href={`/dashboard/invites/${group.id}`}
+                    className="btn-outline flex-1 flex items-center justify-center gap-2"
+                  >
+                    <Eye className="w-4 h-4" />
+                    View
+                  </Link>
+                  <Link
+                    href={`/dashboard/invites/${group.id}/send`}
+                    className="btn-primary flex-1 flex items-center justify-center gap-2"
+                  >
+                    <Send className="w-4 h-4" />
+                    Send Invites
+                  </Link>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

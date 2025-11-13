@@ -48,12 +48,12 @@ export default function Header() {
           <div className="hidden md:flex items-center space-x-4">
             <Link
               href={ROUTES.SIGNIN}
-              className="text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors"
+              className="btn-outline text-sm px-5 py-2"
             >
               Sign In
             </Link>
-            <Link href={ROUTES.DASHBOARD} className="btn-primary text-sm">
-              Get Started
+            <Link href={ROUTES.SIGNUP} className="btn-primary text-sm px-5 py-2">
+              Sign Up
             </Link>
           </div>
 
@@ -92,16 +92,16 @@ export default function Header() {
               <Link
                 href={ROUTES.SIGNIN}
                 onClick={() => setIsMenuOpen(false)}
-                className="text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors"
+                className="btn-outline text-sm inline-block text-center"
               >
                 Sign In
               </Link>
               <Link
-                href={ROUTES.DASHBOARD}
+                href={ROUTES.SIGNUP}
                 onClick={() => setIsMenuOpen(false)}
                 className="btn-primary text-sm inline-block text-center"
               >
-                Get Started
+                Sign Up
               </Link>
             </nav>
           </div>
