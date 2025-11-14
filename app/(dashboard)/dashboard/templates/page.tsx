@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import TemplatePreview from "@/components/TemplatePreview";
 import ColorCustomizationModal from "@/components/ColorCustomizationModal";
 import { TEMPLATES } from "@/lib/constants";
-import { Check, Palette, ExternalLink } from "lucide-react";
+import { Check, Palette, Eye } from "lucide-react";
 
 export default function TemplatesPage() {
+  const router = useRouter();
   const [selectedTemplate, setSelectedTemplate] = useState("elegant-rose");
   const [customColors, setCustomColors] = useState<{
     primary: string;
@@ -46,12 +48,8 @@ export default function TemplatesPage() {
       params.append("accent", customColors.accent);
     }
 
-    // Open in new window
-    window.open(
-      `/template-preview?${params.toString()}`,
-      "_blank",
-      "width=1200,height=900,scrollbars=yes,resizable=yes"
-    );
+    // Navigate to preview in same tab
+    router.push(`/template-preview?${params.toString()}`);
   };
 
   const currentTemplate = TEMPLATES.find((t) => t.id === selectedTemplate);
@@ -67,14 +65,30 @@ export default function TemplatesPage() {
             Select a beautiful template for your wedding invitation
           </p>
         </div>
-        <button
-          onClick={handleSave}
-          disabled={isSaving}
-          className="btn-primary flex items-center gap-2 disabled:opacity-50"
-        >
-          <Check className="w-5 h-5" />
-          {isSaving ? "Saving..." : "Save Changes"}
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsCustomizeModalOpen(true)}
+            className="btn-outline flex items-center gap-2"
+          >
+            <Palette className="w-5 h-5" />
+            Customize Colors
+          </button>
+          <button
+            onClick={handlePreviewTemplate}
+            className="btn-outline flex items-center gap-2"
+          >
+            <Eye className="w-5 h-5" />
+            Preview
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={isSaving}
+            className="btn-primary flex items-center gap-2 disabled:opacity-50"
+          >
+            <Check className="w-5 h-5" />
+            {isSaving ? "Saving..." : "Save Changes"}
+          </button>
+        </div>
       </div>
 
       {/* Current Template Preview */}
@@ -83,22 +97,6 @@ export default function TemplatesPage() {
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-primary-600 animate-pulse" />
             <p className="text-sm font-medium text-primary-900">Current Template</p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handlePreviewTemplate}
-              className="btn-outline text-sm flex items-center gap-2"
-            >
-              <ExternalLink className="w-4 h-4" />
-              Preview Full Page
-            </button>
-            <button
-              onClick={() => setIsCustomizeModalOpen(true)}
-              className="btn-primary text-sm flex items-center gap-2"
-            >
-              <Palette className="w-4 h-4" />
-              Customize Colors
-            </button>
           </div>
         </div>
         <div className="bg-white rounded-lg p-6">
@@ -149,11 +147,7 @@ export default function TemplatesPage() {
               onSelect={setSelectedTemplate}
               onPreview={(templateId) => {
                 const params = new URLSearchParams({ template: templateId });
-                window.open(
-                  `/template-preview?${params.toString()}`,
-                  "_blank",
-                  "width=1200,height=900,scrollbars=yes,resizable=yes"
-                );
+                router.push(`/template-preview?${params.toString()}`);
               }}
             />
           ))}
